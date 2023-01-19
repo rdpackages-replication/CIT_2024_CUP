@@ -42,17 +42,17 @@ https://rdpackages.github.io/replication
 
 - Source: Londono-Velez, Rodriguez and Sanchez (2020): [Upstream and Downstream Impacts of College Merit-Based Financial Aid for Low-Income Students: Ser Pilo Paga in Colombia](https://doi.org/10.1257/pol.20180131), _American Economic Journal: Economic Policy_ 12 (2): 193-227.
 
-- Dataset: [csv](CIT_2023_CUP_multiscore.csv) | [dta](CIT_2023_CUP_multiscore.dta)
+- Dataset: [csv](CIT_2023_CUP_multiscore-nongeo.csv) | [dta](CIT_2023_CUP_multiscore-nongeo.dta)
 
-- Replication: [R](CIT_2023_CUP_multiscore.R) | [Stata](CIT_2023_CUP_multiscore.do)
+- Replication: [R](CIT_2023_CUP_multiscore-nongeo.R) | [Stata](CIT_2023_CUP_multiscore-nongeo.do)
 
 ## Application: DMA Data (Geographic RD Design)
 
 - Source: Keele and Titiunik (2015): [Geographic Boundaries as Regression Discontinuities](https://rdpackages.github.io/references/Keele-Titiunik_2015_PA.pdf), _Political Analysis_ 23(1): 127-155.
 
-- Dataset: [csv](CIT_2023_CUP_senate.csv) | [dta](CIT_2023_CUP_senate.dta)
+- Dataset: [csv](CIT_2023_CUP_multiscore-geo.csv) | [dta](CIT_2023_CUP_multiscore-geo.dta)
 
-- Replication: [R](CIT_2023_CUP_senate.R) | [Stata](CIT_2023_CUP_senate.do)
+- Replication: [R](CIT_2023_CUP_multiscore-geo.R) | [Stata](CIT_2023_CUP_multiscore-geo.do)
 
 
 ## References
