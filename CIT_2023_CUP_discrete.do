@@ -166,7 +166,7 @@ restore
 ** Using rddensity **
 **-----------------**
 sjlog using "outputs/Vol-2-STATA_lso_falsification_rddensity", replace
-	rddensity X
+	rddensity X, nobinomial
 sjlog close, replace logfile smclfile
 
 **-------------------------------**
