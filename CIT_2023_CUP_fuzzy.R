@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------#
 # A Practical Introduction to Regression Discontinuity Designs: Extensions
 # Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-# Last update: 2023-01-21
+# Last update: 2023-10-05
 #------------------------------------------------------------------------------#
 # SOFTWARE WEBSITE: https://rdpackages.github.io/
 #------------------------------------------------------------------------------#
@@ -67,116 +67,92 @@ colnames(Z) <- c("icfes_female", "icfes_age", "icfes_urm", "icfes_stratum",
 # Figure 3.2                #
 # rdplot of the first stage #
 #---------------------------#
-pdf("outputs/Vol-2-R_LRS_rdrobust-rdplot_firststage.pdf")
-  rdplot(D, X1, title = "", x.label = "Distance to SISBEN cutoff", 
-         y.label = "SPP recipient")
-dev.off()
+out <- rdplot(D, X1, title = "", x.label = "Distance to SISBEN cutoff", 
+       y.label = "SPP recipient")
+plot <- out$rdplot + theme(axis.text.x = element_text(size = 16), 
+                           axis.text.y = element_text(size = 16), 
+                           axis.title.y = element_text(size = 16), 
+                           axis.title.x = element_text(size = 16), 
+                           axis.text=element_text(size = 16))
+plot
 
 #-----------------------------#
 # Snippet 3.1                 #
 # rdrobust of the first stage #
 #-----------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdrobust_firststage.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrobust(D, X1)
-  summary(out)
-txtStop()
+out <- rdrobust(D, X1)
+summary(out)
 
 #------------------------------#
 # Snippet 3.2                  #
 # rdrobust of the reduced form #
 #------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdrobust_reducedform.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrobust(Y, X1)
-  summary(out)
-txtStop()
+out <- rdrobust(Y, X1)
+summary(out)
 
 #----------------------------#
 # Figure 3.3                 #
 # rdplot of the reduced form #
 #----------------------------#
-pdf("outputs/Vol-2-R_LRS_rdrobust-rdplot_reducedform.pdf")
-  rdplot(Y, X1, p = 3, title = "", x.label = "Distance to SISBEN cutoff", 
-         y.label = "Immediate access in any HEI")
-dev.off()
+out <- rdplot(Y, X1, p = 3, title = "", x.label = "Distance to SISBEN cutoff", 
+              y.label = "Immediate access in any HEI")
+plot <- out$rdplot + theme(axis.text.x = element_text(size = 16), 
+                           axis.text.y = element_text(size = 16), 
+                           axis.title.y = element_text(size = 16), 
+                           axis.title.x = element_text(size = 16), 
+                           axis.text=element_text(size = 16))
+plot
 
 #------------------------#
 # Snippet 3.3            #
 # Fuzzy RD with rdrobust #
 #------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdrobust_fuzzy.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrobust(Y, X1, fuzzy = D)
-  summary(out)
-txtStop()
+out <- rdrobust(Y, X1, fuzzy = D)
+summary(out)
 
 #----------------------------------------------------#
 # Snippet 3.4                                        #
 # Selecting a window with rdwinselect and covariates #
 #----------------------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdwinselect.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  Z <- cbind(data$icfes_female, data$icfes_age, data$icfes_urm, data$icfes_stratum,
-             data$icfes_famsize)
-  colnames(Z) <- c("icfes_female", "icfes_age", "icfes_urm", "icfes_stratum",
-                   "icfes_famsize")
-  out <- rdwinselect(X1, Z)
-txtStop()
+Z <- data[, c("icfes_female", "icfes_age", "icfes_urm", "icfes_stratum",
+              "icfes_famsize")]
+out <- rdwinselect(X1, Z)
 
 #----------------------------#
 # Snippet 3.5                #
 # First stage with rdrandinf #
 #----------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdrandinf_firststage.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrandinf(D, X1, wl = -0.13000107, wr = 0.13000107)
-txtStop()
+out <- rdrandinf(D, X1, wl = -0.13000107, wr = 0.13000107)
 
 #-----------------------------#
 # Snippet 3.6                 #
 # Reduced form with rdrandinf #
 #-----------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdrandinf_reducedform.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrandinf(Y, X1, wl = -0.13000107, wr = 0.13000107)
-txtStop()
+out <- rdrandinf(Y, X1, wl = -0.13000107, wr = 0.13000107)
 
 #-------------------------#
 # Snippet 3.7             #
 # Fuzzy RD with rdrandinf #
 #-------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdrandinf_TSLS.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrandinf(Y, X1, wl = -0.13000107, wr = 0.13000107, fuzzy = c(D,"tsls"))
-txtStop()
+out <- rdrandinf(Y, X1, wl = -0.13000107, wr = 0.13000107, fuzzy = c(D,"tsls"))
 
 #----------------------------------#
 # Snippet 3.8                      #
 # Manipulation test with rddensity #
 #----------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rddensity.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rddensity(X1, binoW = 0.13000107, binoNW = 1)
-  summary(out)
-txtStop()
+out <- rddensity(X1, binoW = 0.13000107, binoNW = 1)
+summary(out)
 
 #-------------------------------------------#
 # Snippet 3.9                               #
 # Reduced form on a covariate with rdrobust #
 #-------------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdrobust_reducedform_examplecovariate.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrobust(data$icfes_female, X1, bwselect = 'cerrd')
-  summary(out)
-txtStop()
+out <- rdrobust(data$icfes_female, X1, bwselect = 'cerrd')
+summary(out)
 
 #--------------------------------------------#
 # Snippet 3.10                               #
 # Reduced form on a covariate with rdrandinf #
 #--------------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdrandinf_ITT_examplecovariate.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrandinf(data$icfes_female, X1, wl = -0.13000107, wr = 0.13000107)
-txtStop()
+out <- rdrandinf(data$icfes_female, X1, wl = -0.13000107, wr = 0.13000107)
 

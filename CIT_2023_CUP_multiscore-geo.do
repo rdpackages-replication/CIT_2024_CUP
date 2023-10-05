@@ -1,7 +1,7 @@
 **----------------------------------------------------------------------------**
 ** A Practical Introduction to Regression Discontinuity Designs: Extensions
 ** Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-** Last update: 2023-01-21
+** Last update: 2023-10-05
 **----------------------------------------------------------------------------**
 ** SOFTWARE WEBSITE: https://rdpackages.github.io/
 **----------------------------------------------------------------------------**
@@ -55,32 +55,10 @@ use "CIT_2023_CUP_multiscore-geo.dta", clear
 	global sumstats "e2008g treated latitude longitude age black hisp dem
 		female dist1 dist2 dist3 perp_dist";
 # delimit cr
-matrix define R = J(13, 6, .)
-local k = 1
+
 foreach x of global sumstats {
-	local label_`k': variable label `x'
 	summarize `x', detail
-
-	matrix R[`k', 1] = r(mean)
-	matrix R[`k', 2] = r(p50)
-	matrix R[`k', 3] = r(sd)
-	matrix R[`k', 4] = r(min)
-	matrix R[`k', 5] = r(max)
-	matrix R[`k', 6] = r(N)
-	local k = `k' + 1
 }
-
-preserve
-	clear
-	local t = `k' - 1
-	svmat R
-	gen R0 = ""
-	forvalues k = 1 / `t' {
-		replace R0 = "`label_`k''" if _n == `k'
-	}
-	order R0
-	save "outputs/Vol-2-STATA_kt_descstats.dta", replace
-restore
 
 * Multiplying distances by -1 for control units
 foreach x of varlist dist1 dist2 dist3 perp_dist {
@@ -111,8 +89,7 @@ twoway (scatter longitude latitude if treated == 0, ///
 	legend(order(1 2 3 4 5 6) lab(1 "Control") lab(2 "Treated") ///
 		lab(3 "Boundary") lab(4 "b1") lab(5 "b2") lab(6 "b3") ///
 		position(4) ring(0) col(2) region(lwidth(none)) size(small) ///
-		symxsize(0.025in))
-graph export "outputs\Vol-2-kt-GeoRD-plot.pdf", as(pdf) replace   
+		symxsize(0.025in)) xlabel(,nogrid)
 
 **--------------------------------------------------------**
 ** Figure 5.8                                             **
@@ -134,33 +111,19 @@ twoway (histogram disCho_b2 if treated==0, freq colo(ebblue%60)), ///
 ** Snippet 5.12                      **
 ** Using rdrobust with respect to b2 **
 **-----------------------------------**
-sjlog using "outputs/Vol-2-STATA_kt_rdrobust_cutoff2", replace
-	rdrobust e2008g dist2
-sjlog close, replace logfile smclfile
+rdrobust e2008g dist2
 
 **------------------------------------------**
 ** Snippet 5.13                             **
 ** Using rdms and the three boundary points **
 **------------------------------------------**
-sjlog using "outputs/Vol-2-STATA_kt_rdms_basic", replace
-	rdms e2008g latitude longitude treat, cvar(lat_cutoff long_cutoff) 
-sjlog close, replace logfile smclfile
-
-**-------------------------------------------**
-** Snippet 5.14                              **
-** Using rdms and the perpendicular distance **
-**-------------------------------------------**
-sjlog using "outputs/Vol-2-STATA_kt_rdms_perpdist", replace
-	rdms e2008g latitude longitude treat, cvar(lat_cutoff long_cutoff) xnorm(perp_dist)
-sjlog close, replace logfile smclfile
+rdms e2008g latitude longitude treat, cvar(lat_cutoff long_cutoff) 
 
 **-----------------------------------------------**
-** Snippet 5.15                                  **
+** Snippet 5.14                                  **
 ** Using rdrobust and the perpendicular distance **
 **-----------------------------------------------**
-sjlog using "outputs/Vol-2-STATA_kt_rdrobust_perpdist", replace
-	rdrobust e2008g perp_dist
-sjlog close, replace logfile smclfile
+rdrobust e2008g perp_dist
 
 *------------------------------------------------------------------------------*
 clear all

@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------#
 # A Practical Introduction to Regression Discontinuity Designs: Extensions
 # Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-# Last update: 2023-01-21
+# Last update: 2023-10-05
 #------------------------------------------------------------------------------#
 # SOFTWARE WEBSITE: https://rdpackages.github.io/
 #------------------------------------------------------------------------------#
@@ -68,56 +68,42 @@ data$abschord.d2 <- abs(data$dist2)
 h1 <- ggplot(data = data[data$treated == 1,], aes(abschord.d2))+
   labs(x = expression(paste("Chordal distance to ",b[2])), y = "Frequency") +
   geom_histogram(col="black", fill="deepskyblue", alpha = 0.5)+
-  theme_bw()
+  theme_bw() + theme(axis.text.x = element_text(size = 16), 
+                     axis.text.y = element_text(size = 16), 
+                     axis.title.y = element_text(size = 16), 
+                     axis.title.x = element_text(size = 16), 
+                     axis.text=element_text(size = 16))
 h1
-ggsave("outputs/Vol-2-kt-HistDist-Tr.pdf", plot = h1, width = 6, height = 5, 
-       units = "in")
 
 # Panel b: Control observations
 h2 <- ggplot(data = data[data$treated == 0,], aes(abschord.d2))+
   labs(x = expression(paste("Chordal distance to ",b[2])), y = "Frequency") +
   geom_histogram(col="black", fill="deepskyblue", alpha = 0.5)+
-  theme_bw()
+  theme_bw() + theme(axis.text.x = element_text(size = 16), 
+                     axis.text.y = element_text(size = 16), 
+                     axis.title.y = element_text(size = 16), 
+                     axis.title.x = element_text(size = 16), 
+                     axis.text=element_text(size = 16))
 h2
-ggsave("outputs/Vol-2-kt-HistDist-Co.pdf", plot = h2, width = 6, height = 5, 
-       units = "in")
 
 #-----------------------------------#
 # Snippet 5.12                      #
 # Using rdrobust with respect to b2 #
 #-----------------------------------#
-txtStart("outputs/Vol-2-R_kt_rdrobust_cutoff2.txt", 
-         commands = TRUE, results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrobust(data$e2008g, data$dist2)
-  summary(out)
-txtStop()
+out <- rdrobust(data$e2008g, data$dist2)
+summary(out)
 
 #------------------------------------------#
 # Snippet 5.13                             #
 # Using rdms and the three boundary points #
 #------------------------------------------#
-txtStart("outputs/Vol-2-R_kt_rdms_basic.txt", 
-         commands = TRUE, results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdms(data$e2008g, data$latitude, data$lat_cutoff[1:3], data$longitude, 
-              data$treat, data$long_cutoff[1:3])
-txtStop()
-
-#-------------------------------------------#
-# Snippet 5.14                              #
-# Using rdms and the perpendicular distance #
-#-------------------------------------------#
-txtStart("outputs/Vol-2-R_kt_rdms_perpdist.txt", 
-         commands = TRUE, results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdms(data$e2008g, data$latitude, data$lat_cutoff[1:3], data$longitude, 
-              data$treat, data$long_cutoff[1:3], xnorm = data$perp_dist)
-txtStop()
+lat <- data$lat_cutoff[1:3]
+lon <- data$long_cutoff[1:3]
+out <- rdms(data$e2008g, data$latitude, lat, data$longitude, data$treat, lon)
 
 #-----------------------------------------------#
-# Snippet 5.15                                  #
+# Snippet 5.14                                  #
 # Using rdrobust and the perpendicular distance #
 #-----------------------------------------------#
-txtStart("outputs/Vol-2-R_kt_rdrobust_perpdist.txt", 
-         commands = TRUE, results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrobust(data$e2008g, data$perp_dist)
-  summary(out)
-txtStop()
+out <- rdrobust(data$e2008g, data$perp_dist)
+summary(out)

@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------#
 # A Practical Introduction to Regression Discontinuity Designs: Extensions
 # Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-# Last update: 2023-01-21
+# Last update: 2023-10-05
 #------------------------------------------------------------------------------#
 # SOFTWARE WEBSITE: https://rdpackages.github.io/
 #------------------------------------------------------------------------------#
@@ -85,89 +85,72 @@ map <- ggplot() +
            colour="black", linetype = 1, 
            arrow = arrow(length = unit(0.25, "cm")))
 map
-ggsave("outputs/Vol-2-R_multiscore_geographic.pdf", plot = map, width = 7, 
-       height = (13/16)*7, units = "in")
 
 #-------------------------------------#
 # Snippet 5.6                         #
 # Using rdms on three boundary points #
 #-------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdms_threepoints.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  cvec <- c(0, 30, 0)
-  cvec2 <- c(0, 0, 50)
-  out <- rdms(Y = data$spadies_any, X = data$running_sisben, 
-              X2 = data$running_saber11, zvar = data$tr, C = cvec, C2 = cvec2)
-txtStop()
+cvec <- c(0, 30, 0)
+cvec2 <- c(0, 0, 50)
+Y <- data$spadies_any
+X <- data$running_sisben
+X2 <- data$running_saber11
+Zvar <- data$tr
+out <- rdms(Y = Y, X = X, X2 = X2, zvar = Zvar, C = cvec, C2 = cvec2)
 
 #---------------------------------------------#
 # Snippet 5.7                                 #
 # Using rdrobust to illustrate what rdms does #
 #---------------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdms_vs_rdrobust.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  pdim1 <- 30
-  pdim2 <- 0
-  data$dist <- sqrt( (data$running_sisben - pdim1)^2 + 
-                       (data$running_saber11 - pdim2)^2 )
-  data$dist <- data$dist * (2 * data$tr - 1)
-  out <- rdrobust(data$spadies_any, data$dist)
-  summary(out)
-txtStop()
+pdim1 <- 30
+pdim2 <- 0
+data$dist <- sqrt( (data$running_sisben - pdim1)^2 + 
+                     (data$running_saber11 - pdim2)^2 )
+data$dist <- data$dist * (2 * data$tr - 1)
+out <- rdrobust(data$spadies_any, data$dist)
+summary(out)
 
 #--------------------------------------------------------------#
 # Snippet 5.8                                                  #
 # Creating the perpendicular distance to the boundary (step 1) #
 #--------------------------------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdms_perpendicular_dist_step1.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  data2 <- data[is.na(data$running_sisben) == FALSE & 
-                  is.na(data$running_saber11) == FALSE,]
-  #---#
-  data2$aux1 <- abs(data2$running_sisben)
-  data2$aux2 <- abs(data2$running_saber11)
-  #---#
-  data2$case <- NA
-  data2$case[data2$running_sisben >= 0 & data2$running_saber11 >= 0] <- 1
-  data2$case[data2$running_sisben <= 0 & data2$running_saber11 >= 0] <- 2
-  data2$case[data2$running_sisben >= 0 & data2$running_saber11 <= 0] <- 3
-  data2$case[data2$running_sisben <= 0 & data2$running_saber11 <= 0] <- 4
-  #---#
-  data2$xnorm <- NA
-  data2$xnorm[data2$case == 1] <- apply(data2[data2$case == 1, c("aux1","aux2")], 
-                                        1, FUN = min)
-  data2$xnorm[data2$case == 2] <- data2$aux1[data2$case == 2]
-  data2$xnorm[data2$case == 3] <- data2$aux2[data2$case == 3]
-  data2$xnorm[data2$case == 4] <- sqrt(data2$aux1[data2$case == 4]^2 + 
-                                         data2$aux2[data2$case == 4]^2)
-txtStop()
+data2 <- data[!is.na(data$running_sisben) & !is.na(data$running_saber11),]
+#---#
+data2$aux1 <- abs(data2$running_sisben)
+data2$aux2 <- abs(data2$running_saber11)
+#---#
+data2$r1 <- data2$running_sisben
+data2$r2 <- data2$running_saber11
+#---#
+data2$c <- NA
+data2$c[data2$r1 >= 0 & data2$r2 >= 0] <- 1
+data2$c[data2$r1 <= 0 & data2$r2 >= 0] <- 2
+data2$c[data2$r1 >= 0 & data2$r2 <= 0] <- 3
+data2$c[data2$r1 <= 0 & data2$r2 <= 0] <- 4
+#---#
+data2$xnorm <- NA
+data2$xnorm[data2$c == 1] <- apply(data2[data2$c == 1, c("aux1","aux2")], 1, FUN = min)
+data2$xnorm[data2$c == 2] <- data2$aux1[data2$c == 2]
+data2$xnorm[data2$c == 3] <- data2$aux2[data2$c == 3]
+data2$xnorm[data2$c == 4] <- sqrt(data2$aux1[data2$c == 4]^2 + data2$aux2[data2$c == 4]^2)
 
 #--------------------------------------------------------------#
 # Snippet 5.9                                                  #
 # Creating the perpendicular distance to the boundary (step 2) #
 #--------------------------------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdms_perpendicular_dist_step2.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  data2$xnorm <- data2$xnorm * (2 * data2$tr - 1) 
-txtStop()
+data2$xnorm <- data2$xnorm * (2 * data2$tr - 1) 
 
 #-------------------------------------------#
 # Snippet 5.10                              #
 # rdrobust using the perpendicular distance #
 #-------------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdms_perpendicular_dist_rdrobust.txt", 
-         commands = TRUE, results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrobust(data2$spadies_any, data2$xnorm)
-  summary(out)
-txtStop()
+out <- rdrobust(data2$spadies_any, data2$xnorm)
+summary(out)
 
 #---------------------------------------#
 # Snippet 5.11                          #
 # rdms using the perpendicular distance #
 #---------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdms_perpendicular_dist.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdms(Y = data2$spadies_any, X = data2$running_sisben, 
-              X2 = data2$running_saber11, zvar = data2$tr, C = cvec, 
-              C2 = cvec2, xnorm = data2$xnorm)
-txtStop()
+out <- rdms(Y = data2$spadies_any, X = data2$running_sisben, 
+            X2 = data2$running_saber11, zvar = data2$tr, C = cvec, 
+            C2 = cvec2, xnorm = data2$xnorm)

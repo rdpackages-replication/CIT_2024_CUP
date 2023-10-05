@@ -1,7 +1,7 @@
 **----------------------------------------------------------------------------**
 ** A Practical Introduction to Regression Discontinuity Designs: Extensions
 ** Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-** Last update: 2023-01-21
+** Last update: 2023-10-05
 **----------------------------------------------------------------------------**
 ** SOFTWARE WEBSITE: https://rdpackages.github.io/
 **----------------------------------------------------------------------------**
@@ -110,57 +110,47 @@ drop rdmcplot*
 ** Snippet 5.1             **
 ** rdrobust using cutoff 1 **
 **-------------------------**
-sjlog using "outputs/Vol-2-STATA_LRS_rdrobust_cutoff1", replace
-	rdrobust spadies_any sisben_score if cutoff == -57.21, c(-57.21)
-sjlog close, replace logfile smclfile
+rdrobust spadies_any sisben_score if cutoff == -57.21, c(-57.21)
 
 **----------------------------------**
 ** Snippet 5.2                      **
 ** Using rdmc and the three cutoffs **
 **----------------------------------**
-sjlog using "outputs/Vol-2-STATA_LRS_rdmc", replace
-	rdmc spadies_any sisben_score, c(cutoff)
-sjlog close, replace logfile smclfile
+rdmc spadies_any sisben_score, c(cutoff)
 
 **----------------------------------------**
 ** Snippet 5.3                            **
 ** Using rdrobust with a normalized score **
 **----------------------------------------**
-sjlog using "outputs/Vol-2-STATA_LRS_rdrobust_pooled_xnorm", replace
-	gen double xnorm = .
-	replace xnorm = sisben_score + 57.21 if sisben_area == 1
-	replace xnorm = sisben_score + 56.32 if sisben_area == 2
-	replace xnorm = sisben_score + 40.75 if sisben_area == 3
-	rdrobust spadies_any xnorm, c(0)
-sjlog close, replace logfile smclfile
+gen double xnorm = .
+replace xnorm = sisben_score + 57.21 if sisben_area == 1
+replace xnorm = sisben_score + 56.32 if sisben_area == 2
+replace xnorm = sisben_score + 40.75 if sisben_area == 3
+rdrobust spadies_any xnorm, c(0)
 
 **------------------------------------------**
 ** Snippet 5.4                              **
 ** Using rdmc and understanding its outputs **
 **------------------------------------------**
-sjlog using "outputs/Vol-2-STATA_LRS_rdmc_row_weightedresults", replace
-	rdmc spadies_any sisben_score, c(cutoff) 
-	ereturn list
-	mat list e(coefs)
-	mat list e(weights)
-	display e(coefs)[1,1] * e(weights)[1,1] + ///
-		e(coefs)[1,2] * e(weights)[1,2] + ///
-		e(coefs)[1,3] * e(weights)[1,3]
-sjlog close, replace logfile smclfile
+rdmc spadies_any sisben_score, c(cutoff) 
+ereturn list
+mat list e(coefs)
+mat list e(weights)
+display e(coefs)[1,1] * e(weights)[1,1] + ///
+	e(coefs)[1,2] * e(weights)[1,2] + ///
+	e(coefs)[1,3] * e(weights)[1,3]
 
 **--------------------------------------------------------------------**
 ** Snippet 5.5                                                        **
 ** Formally testing the difference between the effects at the cutoffs **
 **--------------------------------------------------------------------**
-sjlog using "outputs/Vol-2-STATA_LRS_rdmc_comparing_effects", replace
-	rdmc spadies_any sisben_score, c(cutoff) 
-	matrix b = e(b)
-	matrix V = e(V)
-	local dif = b[1,1] - b[1,2]
-	local dif_se = sqrt( V[1,1] + V[2,2] )
-	local zstat = `dif' / `dif_se'
-	local pval = 2 * normal( -abs(`zstat') )
-sjlog close, replace logfile smclfile
+rdmc spadies_any sisben_score, c(cutoff) 
+matrix b = e(b)
+matrix V = e(V)
+local dif = b[1,1] - b[1,2]
+local dif_se = sqrt( V[1,1] + V[2,2] )
+local zstat = `dif' / `dif_se'
+local pval = 2 * normal( -abs(`zstat') )
 
 *------------------------------------------------------------------------------*
 clear all

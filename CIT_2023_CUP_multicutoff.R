@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------#
 # A Practical Introduction to Regression Discontinuity Designs: Extensions
 # Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-# Last update: 2023-01-21
+# Last update: 2023-10-05
 #------------------------------------------------------------------------------#
 # SOFTWARE WEBSITE: https://rdpackages.github.io/
 #------------------------------------------------------------------------------#
@@ -59,12 +59,16 @@ data <- read.dta("CIT_2023_CUP_multicutoff.dta")
 # Panel b: rdmcplot on the three cutoffs #
 #----------------------------------------#
 # Panel a
-pdf("outputs/Vol-2-R_LRS_rdplot_cutoff1.pdf")
-  rdplot(data$spadies_any[data$cutoff == -57.21], 
-         data$sisben_score[data$cutoff == -57.21],
-         c = -57.21, p = 1, title = "", x.label = "Distance to SISBEN cutoff",
-         y.label = "Immediate access in any HEI")
-dev.off()
+out <- rdplot(data$spadies_any[data$cutoff == -57.21], 
+              data$sisben_score[data$cutoff == -57.21],
+              c = -57.21, p = 1, title = "", x.label = "Distance to SISBEN cutoff",
+              y.label = "Immediate access in any HEI")
+plot <- out$rdplot + theme(axis.text.x = element_text(size = 16), 
+                           axis.text.y = element_text(size = 16), 
+                           axis.title.y = element_text(size = 16), 
+                           axis.title.x = element_text(size = 16),
+                           axis.text=element_text(size = 16))
+plot
 
 #-----#
 # Panel b
@@ -129,75 +133,62 @@ rdmc_plot
 rdmc_plot <- rdmc_plot + geom_point(aes(x = Xmean[, 3], y = Ymean[, 3]), col = "darkgreen", shape = 2, na.rm = TRUE) +
   geom_line(aes(x = X0[, 3], y = Yhat0[, 3]), col = "darkgreen", linetype = 1, na.rm = TRUE, size = 1) +
   geom_line(aes(x = X1[, 3], y = Yhat1[, 3]), col = "darkgreen", linetype = 1, na.rm = TRUE, size = 1) +
-  geom_vline(xintercept = -40.75, col = "darkgreen", linetype = "dashed", size = 1)
+  geom_vline(xintercept = -40.75, col = "darkgreen", linetype = "dashed", size = 1) + 
+  theme(axis.text.x = element_text(size = 16), 
+        axis.text.y = element_text(size = 16), 
+        axis.title.y = element_text(size = 16), 
+        axis.title.x = element_text(size = 16), 
+        axis.text=element_text(size = 16))
 rdmc_plot
-ggsave("outputs/Vol-2-R_LRS_rdmcplot.pdf", plot = rdmc_plot, width = 5.7, height = 5.5, units = "in")
 
 #-------------------------#
 # Snippet 5.1             #
 # rdrobust using cutoff 1 #
 #-------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdrobust_cutoff1.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdrobust(data$spadies_any[data$cutoff == -57.21], 
-                  data$sisben_score[data$cutoff == -57.21], c = -57.21)
-  summary(out)
-txtStop()
+data.cut1 <- data[data$cutoff == -57.21, c("spadies_any", "sisben_score")]
+out <- rdrobust(data.cut1$spadies_any, data.cut1$sisben_score, c = -57.21)
+summary(out)
 
 #----------------------------------#
 # Snippet 5.2                      #
 # Using rdmc and the three cutoffs #
 #----------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdmc.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdmc(data$spadies_any, data$sisben_score, data$cutoff)
-txtStop()
+out <- rdmc(data$spadies_any, data$sisben_score, data$cutoff)
 
 #----------------------------------------#
 # Snippet 5.3                            #
 # Using rdrobust with a normalized score #
 #----------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdrobust_pooled_xnorm.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  data$xnorm <- NA
-  data$xnorm[data$sisben_area == "Main metro area"] <- 
-    data$sisben_score[data$sisben_area == "Main metro area"] + 57.21
-  data$xnorm[data$sisben_area == "Other urban area"] <- 
-    data$sisben_score[data$sisben_area == "Other urban area"] + 56.32
-  data$xnorm[data$sisben_area == "Rural area"] <- 
-    data$sisben_score[data$sisben_area == "Rural area"] + 40.75
-  out <- rdrobust(data$spadies_any, data$xnorm, c=0)
-  summary(out)
-txtStop()
+data$area <- NA
+data$area[data$sisben_area == "Main metro area"] <- 1
+data$area[data$sisben_area == "Other urban area"] <- 2
+data$area[data$sisben_area == "Rural area"] <- 3
+#---#
+data$xnorm <- NA
+data$xnorm[data$area == 1] <- data$sisben_score[data$area == 1] + 57.21
+data$xnorm[data$area == 2] <- data$sisben_score[data$area == 2] + 56.32
+data$xnorm[data$area == 3] <- data$sisben_score[data$area == 3] + 40.75
+#---#
+out <- rdrobust(data$spadies_any, data$xnorm, c=0)
+summary(out)
 
 #------------------------------------------#
 # Snippet 5.4                              #
 # Using rdmc and understanding its outputs #
 #------------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdmc_row_weightedresults.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdmc(data$spadies_any, data$sisben_score, data$cutoff) 
-  names(out)
-  print(out$Coefs)
-  print(out$W)
-  print(out$Coefs[1,1] * out$W[1,1] +
-          out$Coefs[1,2] * out$W[1,2] +
-          out$Coefs[1,3] * out$W[1,3])
-txtStop()
+out <- rdmc(data$spadies_any, data$sisben_score, data$cutoff) 
+Coefs <- out$Coefs
+W <- out$W
+print(Coefs)
+print(W)
+print(Coefs[1,1]*W[1,1] + Coefs[1,2]*W[1,2] + Coefs[1,3]*W[1,3])
 
 #--------------------------------------------------------------------#
 # Snippet 5.5                                                        #
 # Formally testing the difference between the effects at the cutoffs #
 #--------------------------------------------------------------------#
-txtStart("outputs/Vol-2-R_LRS_rdmc_comparing_effects.txt", commands = TRUE, 
-         results = TRUE, append = FALSE, visible.only = TRUE)
-  out <- rdmc(data$spadies_any, data$sisben_score, data$cutoff)
-  dif <- out$B[1,1] - out$B[1,2]
-  print(paste("The difference is ", round(dif,3)))
-  dif_se <- sqrt( out$V[1,1] + out$V[1,2] )
-  print(paste("The standard error of the difference is ", round(dif_se,3)))
-  zstat <- dif / dif_se
-  print(paste("The z-statistic is ", round(zstat,3)))
-  pval <- 2 * pnorm(-abs(zstat))
-  print(paste("The associated p-value is ", round(pval,3)))
-txtStop()
+out <- rdmc(data$spadies_any, data$sisben_score, data$cutoff)
+round(out$B[1,1] - out$B[1,2], 3)
+round(sqrt(out$V[1,1] + out$V[1,2]), 3)
+round((out$B[1,1] - out$B[1,2]) / sqrt(out$V[1,1] + out$V[1,2]), 3)
+round(2 * pnorm(-abs((out$B[1,1] - out$B[1,2]) / sqrt(out$V[1,1] + out$V[1,2]))), 3)
