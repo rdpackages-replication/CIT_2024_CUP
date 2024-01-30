@@ -14,7 +14,7 @@ https://rdpackages.github.io/replication
 
 - Dataset: [csv](CIT_2024_CUP_locrand.csv) | [dta](CIT_2024_CUP_locrand.dta)
 
-- Replication: [R](CIT_2024_CUP_locrand.R) | [Stata](CIT_2024_CUP_locrand.do)
+- Replication: [Python](CIT_2024_CUP_locrand.py) | [R](CIT_2024_CUP_locrand.R) | [Stata](CIT_2024_CUP_locrand.do)
 
 ## Application: SPP Data (Fuzzy RD Design)
 
@@ -22,7 +22,7 @@ https://rdpackages.github.io/replication
 
 - Dataset: [csv](CIT_2024_CUP_fuzzy.csv) | [dta](CIT_2024_CUP_fuzzy.dta)
 
-- Replication: [R](CIT_2024_CUP_fuzzy.R) | [Stata](CIT_2024_CUP_fuzzy.do)
+- Replication: [Python](CIT_2024_CUP_fuzzy.py) | [R](CIT_2024_CUP_fuzzy.R) | [Stata](CIT_2024_CUP_fuzzy.do)
 
 ## Application: Academic Probation Data (Discrete Score)
 
@@ -30,7 +30,7 @@ https://rdpackages.github.io/replication
 
 - Dataset: [csv](CIT_2024_CUP_discrete.csv) | [dta](CIT_2024_CUP_discrete.dta)
 
-- Replication: [R](CIT_2024_CUP_discrete.R) | [Stata](CIT_2024_CUP_discrete.do)
+- Replication: [Python](CIT_2024_CUP_discrete.py) | [R](CIT_2024_CUP_discrete.R) | [Stata](CIT_2024_CUP_discrete.do)
 
 ## Application: SPP Data (Multi-Cutoff RD Design)
 
@@ -38,7 +38,7 @@ https://rdpackages.github.io/replication
 
 - Dataset: [csv](CIT_2024_CUP_multicutoff.csv) | [dta](CIT_2024_CUP_multicutoff.dta)
 
-- Replication: [R](CIT_2024_CUP_multicutoff.R) | [Stata](CIT_2024_CUP_multicutoff.do)
+- Replication: [Python](CIT_2024_CUP_multicutoff.py) | [R](CIT_2024_CUP_multicutoff.R) | [Stata](CIT_2024_CUP_multicutoff.do)
 
 ## Application: SPP Data (Multi-Score RD Design)
 
@@ -46,7 +46,7 @@ https://rdpackages.github.io/replication
 
 - Dataset: [csv](CIT_2024_CUP_multiscore-nongeo.csv) | [dta](CIT_2024_CUP_multiscore-nongeo.dta)
 
-- Replication: [R](CIT_2024_CUP_multiscore-nongeo.R) | [Stata](CIT_2024_CUP_multiscore-nongeo.do)
+- Replication: [Python](CIT_2024_CUP_multiscore-nongeo.py) | [R](CIT_2024_CUP_multiscore-nongeo.R) | [Stata](CIT_2024_CUP_multiscore-nongeo.do)
 
 ## Application: DMA Data (Geographic RD Design)
 
@@ -54,7 +54,7 @@ https://rdpackages.github.io/replication
 
 - Dataset: [csv](CIT_2024_CUP_multiscore-geo.csv) | [dta](CIT_2024_CUP_multiscore-geo.dta)
 
-- Replication: [R](CIT_2024_CUP_multiscore-geo.R) | [Stata](CIT_2024_CUP_multiscore-geo.do)
+- Replication: [Python](CIT_2024_CUP_multiscore-geo.py) | [R](CIT_2024_CUP_multiscore-geo.R) | [Stata](CIT_2024_CUP_multiscore-geo.do)
 
 
 ## References
