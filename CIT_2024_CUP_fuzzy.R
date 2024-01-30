@@ -2,7 +2,6 @@
 #------------------------------------------------------------------------------#
 # A Practical Introduction to Regression Discontinuity Designs: Extensions
 # Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-# Last update: 2023-10-05
 #------------------------------------------------------------------------------#
 # SOFTWARE WEBSITE: https://rdpackages.github.io/
 #------------------------------------------------------------------------------#
@@ -15,11 +14,9 @@
 # install.packages('foreign')
 # install.packages('ggplot2')
 # install.packages('grid')
-# install.packages('TeachingDemos')
 # install.packages('geosphere')
 # install.packages('tidyverse')
 # install.packages('sf')
-# install.packages('USAboundaries')
 #------------------------------------------------------------------------------#
 
 ##################################################
@@ -40,17 +37,15 @@ library(lpdensity)
 library(rddensity)
 library(rdrobust)
 library(rdlocrand)
-library(TeachingDemos)
 library(rdmulti)
 library(geosphere)
 library(tidyverse)
 library(sf)
-library(USAboundaries)
 
 #------------------#
 # Loading the data #
 #------------------#
-data <- read.dta("CIT_2023_CUP_fuzzy.dta")
+data <- read.dta("CIT_2024_CUP_fuzzy.dta")
 Y <- data$Y
 X1 <- data$X1
 T <- data$T
@@ -63,10 +58,10 @@ Z <- cbind(data$icfes_female, data$icfes_age, data$icfes_urm, data$icfes_stratum
 colnames(Z) <- c("icfes_female", "icfes_age", "icfes_urm", "icfes_stratum",
                  "icfes_famsize")
 
-#---------------------------#
-# Figure 3.2                #
-# rdplot of the first stage #
-#---------------------------#
+#------------------------------------------#
+# Figure 8 (Figure 3.2 in arXiv pre-print) #
+# rdplot of the first stage                #
+#------------------------------------------#
 out <- rdplot(D, X1, title = "", x.label = "Distance to SISBEN cutoff", 
        y.label = "SPP recipient")
 plot <- out$rdplot + theme(axis.text.x = element_text(size = 16), 
@@ -76,24 +71,24 @@ plot <- out$rdplot + theme(axis.text.x = element_text(size = 16),
                            axis.text=element_text(size = 16))
 plot
 
-#-----------------------------#
-# Snippet 3.1                 #
-# rdrobust of the first stage #
-#-----------------------------#
+#--------------------------------------------#
+# Snippet 8 (Snippet 3.1 in arXiv pre-print) #
+# rdrobust of the first stage                #
+#--------------------------------------------#
 out <- rdrobust(D, X1)
 summary(out)
 
-#------------------------------#
-# Snippet 3.2                  #
-# rdrobust of the reduced form #
-#------------------------------#
+#--------------------------------------------#
+# Snippet 9 (Snippet 3.2 in arXiv pre-print) #
+# rdrobust of the reduced form               #
+#--------------------------------------------#
 out <- rdrobust(Y, X1)
 summary(out)
 
-#----------------------------#
-# Figure 3.3                 #
-# rdplot of the reduced form #
-#----------------------------#
+#------------------------------------------#
+# Figure 9 (Figure 3.3 in arXiv pre-print) #
+# rdplot of the reduced form               #
+#------------------------------------------#
 out <- rdplot(Y, X1, p = 3, title = "", x.label = "Distance to SISBEN cutoff", 
               y.label = "Immediate access in any HEI")
 plot <- out$rdplot + theme(axis.text.x = element_text(size = 16), 
@@ -103,56 +98,56 @@ plot <- out$rdplot + theme(axis.text.x = element_text(size = 16),
                            axis.text=element_text(size = 16))
 plot
 
-#------------------------#
-# Snippet 3.3            #
-# Fuzzy RD with rdrobust #
-#------------------------#
+#---------------------------------------------#
+# Snippet 10 (Snippet 3.3 in arXiv pre-print) #
+# Fuzzy RD with rdrobust                      #
+#---------------------------------------------#
 out <- rdrobust(Y, X1, fuzzy = D)
 summary(out)
 
 #----------------------------------------------------#
-# Snippet 3.4                                        #
+# Snippet 11 (Snippet 3.4 in arXiv pre-print)        #
 # Selecting a window with rdwinselect and covariates #
 #----------------------------------------------------#
 Z <- data[, c("icfes_female", "icfes_age", "icfes_urm", "icfes_stratum",
               "icfes_famsize")]
 out <- rdwinselect(X1, Z)
 
-#----------------------------#
-# Snippet 3.5                #
-# First stage with rdrandinf #
-#----------------------------#
+#---------------------------------------------#
+# Snippet 12 (Snippet 3.5 in arXiv pre-print) #
+# First stage with rdrandinf                  #
+#---------------------------------------------#
 out <- rdrandinf(D, X1, wl = -0.13000107, wr = 0.13000107)
 
-#-----------------------------#
-# Snippet 3.6                 #
-# Reduced form with rdrandinf #
-#-----------------------------#
+#---------------------------------------------#
+# Snippet 13 (Snippet 3.6 in arXiv pre-print) #
+# Reduced form with rdrandinf                 #
+#---------------------------------------------#
 out <- rdrandinf(Y, X1, wl = -0.13000107, wr = 0.13000107)
 
-#-------------------------#
-# Snippet 3.7             #
-# Fuzzy RD with rdrandinf #
-#-------------------------#
+#---------------------------------------------#
+# Snippet 14 (Snippet 3.7 in arXiv pre-print) #
+# Fuzzy RD with rdrandinf                     #
+#---------------------------------------------#
 out <- rdrandinf(Y, X1, wl = -0.13000107, wr = 0.13000107, fuzzy = c(D,"tsls"))
 
-#----------------------------------#
-# Snippet 3.8                      #
-# Manipulation test with rddensity #
-#----------------------------------#
+#---------------------------------------------#
+# Snippet 15 (Snippet 3.8 in arXiv pre-print) #
+# Manipulation test with rddensity            #
+#---------------------------------------------#
 out <- rddensity(X1, binoW = 0.13000107, binoNW = 1)
 summary(out)
 
-#-------------------------------------------#
-# Snippet 3.9                               #
-# Reduced form on a covariate with rdrobust #
-#-------------------------------------------#
+#---------------------------------------------#
+# Snippet 16 (Snippet 3.9 in arXiv pre-print) #
+# Reduced form on a covariate with rdrobust   #
+#---------------------------------------------#
 out <- rdrobust(data$icfes_female, X1, bwselect = 'cerrd')
 summary(out)
 
-#--------------------------------------------#
-# Snippet 3.10                               #
-# Reduced form on a covariate with rdrandinf #
-#--------------------------------------------#
+#----------------------------------------------#
+# Snippet 17 (Snippet 3.10 in arXiv pre-print) #
+# Reduced form on a covariate with rdrandinf   #
+#----------------------------------------------#
 out <- rdrandinf(data$icfes_female, X1, wl = -0.13000107, wr = 0.13000107)
 

@@ -1,7 +1,6 @@
 **----------------------------------------------------------------------------**
 ** A Practical Introduction to Regression Discontinuity Designs: Extensions
 ** Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-** Last update: 2023-10-05
 **----------------------------------------------------------------------------**
 ** SOFTWARE WEBSITE: https://rdpackages.github.io/
 **----------------------------------------------------------------------------**
@@ -23,8 +22,6 @@
 **
 ** net install lpdensity, ///
 **		from("https://raw.githubusercontent.com/nppackages/lpdensity/master/stata") replace
-**
-** ssc install mmerge
 **----------------------------------------------------------------------------**
 
 clear
@@ -45,13 +42,13 @@ set more off
 **------------------**
 ** Loading the data **
 **------------------**
-use "CIT_2023_CUP_multicutoff.dta", clear
+use "CIT_2024_CUP_multicutoff.dta", clear
 
-**----------------------------------------**
-** Figure 5.4 (no output)                 **
-** Panel a: rdplot on one cutoff          **
-** Panel b: rdmcplot on the three cutoffs **
-**----------------------------------------**
+**-------------------------------------------**
+** Figure 15 (Figure 5.4 in arXiv pre-print) **
+** Panel a: rdplot on one cutoff             **
+** Panel b: rdmcplot on the three cutoffs    **
+**-------------------------------------------**
 * Panel a:
 rdplot spadies_any sisben_score if cutoff == -57.21, c(-57.21) p(1)
 
@@ -80,7 +77,7 @@ rdmcplot spadies_any sisben_score, ///
 
 drop p b nb*
 
-* The rest of the code in this Figure 5.4b illustrates how to create the
+* The rest of the code in this figure illustrates how to create the
 * plot by hand, using the outputs from rdmcplot. This is useful in case
 * the user wants to customize the plot even further.
 
@@ -106,32 +103,32 @@ twoway (scatter rdmcplot_mean_y_1 rdmcplot_mean_x_1, mcolor(blue) msize(small)) 
 
 drop rdmcplot*
 
-**-------------------------**
-** Snippet 5.1             **
-** rdrobust using cutoff 1 **
-**-------------------------**
+**---------------------------------------------**
+** Snippet 28 (Snippet 5.1 in arXiv pre-print) **
+** rdrobust using cutoff 1                     **
+**---------------------------------------------**
 rdrobust spadies_any sisben_score if cutoff == -57.21, c(-57.21)
 
-**----------------------------------**
-** Snippet 5.2                      **
-** Using rdmc and the three cutoffs **
-**----------------------------------**
+**---------------------------------------------**
+** Snippet 29 (Snippet 5.2 in arXiv pre-print) **
+** Using rdmc and the three cutoffs            **
+**---------------------------------------------**
 rdmc spadies_any sisben_score, c(cutoff)
 
-**----------------------------------------**
-** Snippet 5.3                            **
-** Using rdrobust with a normalized score **
-**----------------------------------------**
+**---------------------------------------------**
+** Snippet 30 (Snippet 5.3 in arXiv pre-print) **
+** Using rdrobust with a normalized score      **
+**---------------------------------------------**
 gen double xnorm = .
 replace xnorm = sisben_score + 57.21 if sisben_area == 1
 replace xnorm = sisben_score + 56.32 if sisben_area == 2
 replace xnorm = sisben_score + 40.75 if sisben_area == 3
 rdrobust spadies_any xnorm, c(0)
 
-**------------------------------------------**
-** Snippet 5.4                              **
-** Using rdmc and understanding its outputs **
-**------------------------------------------**
+**---------------------------------------------**
+** Snippet 31 (Snippet 5.4 in arXiv pre-print) **
+** Using rdmc and understanding its outputs    **
+**---------------------------------------------**
 rdmc spadies_any sisben_score, c(cutoff) 
 ereturn list
 mat list e(coefs)
@@ -141,7 +138,7 @@ display e(coefs)[1,1] * e(weights)[1,1] + ///
 	e(coefs)[1,3] * e(weights)[1,3]
 
 **--------------------------------------------------------------------**
-** Snippet 5.5                                                        **
+** Snippet 32 (Snippet 5.5 in arXiv pre-print)                        **
 ** Formally testing the difference between the effects at the cutoffs **
 **--------------------------------------------------------------------**
 rdmc spadies_any sisben_score, c(cutoff) 

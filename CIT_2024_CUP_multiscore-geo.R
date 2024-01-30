@@ -2,7 +2,6 @@
 #------------------------------------------------------------------------------#
 # A Practical Introduction to Regression Discontinuity Designs: Extensions
 # Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-# Last update: 2023-10-05
 #------------------------------------------------------------------------------#
 # SOFTWARE WEBSITE: https://rdpackages.github.io/
 #------------------------------------------------------------------------------#
@@ -15,11 +14,9 @@
 # install.packages('foreign')
 # install.packages('ggplot2')
 # install.packages('grid')
-# install.packages('TeachingDemos')
 # install.packages('geosphere')
 # install.packages('tidyverse')
 # install.packages('sf')
-# install.packages('USAboundaries')
 #------------------------------------------------------------------------------#
 
 ###########################################################
@@ -41,17 +38,15 @@ library(lpdensity)
 library(rddensity)
 library(rdrobust)
 library(rdlocrand)
-library(TeachingDemos)
 library(rdmulti)
 library(geosphere)
 library(tidyverse)
 library(sf)
-library(USAboundaries)
 
 #------------------#
 # Loading the data #
 #------------------#
-data <- read.dta("CIT_2023_CUP_multiscore-geo.dta")
+data <- read.dta("CIT_2024_CUP_multiscore-geo.dta")
 
 data$dist1[data$treated == 0] <- data$dist1[data$treated == 0] * (-1)
 data$dist2[data$treated == 0] <- data$dist2[data$treated == 0] * (-1)
@@ -59,7 +54,7 @@ data$dist3[data$treated == 0] <- data$dist3[data$treated == 0] * (-1)
 data$perp_dist[data$treated == 0] <- data$perp_dist[data$treated == 0] * (-1)
 
 #--------------------------------------------------------#
-# Figure 5.8                                             #
+# Figure 19 (Figure 5.8 in arXiv pre-print)              #
 # Histograms of chordal distance for control and treated #
 #--------------------------------------------------------#
 data$abschord.d2 <- abs(data$dist2)
@@ -86,23 +81,23 @@ h2 <- ggplot(data = data[data$treated == 0,], aes(abschord.d2))+
                      axis.text=element_text(size = 16))
 h2
 
-#-----------------------------------#
-# Snippet 5.12                      #
-# Using rdrobust with respect to b2 #
-#-----------------------------------#
+#----------------------------------------------#
+# Snippet 39 (Snippet 5.12 in arXiv pre-print) #
+# Using rdrobust with respect to b2            #
+#----------------------------------------------#
 out <- rdrobust(data$e2008g, data$dist2)
 summary(out)
 
-#------------------------------------------#
-# Snippet 5.13                             #
-# Using rdms and the three boundary points #
-#------------------------------------------#
+#----------------------------------------------#
+# Snippet 40 (Snippet 5.13 in arXiv pre-print) #
+# Using rdms and the three boundary points     #
+#----------------------------------------------#
 lat <- data$lat_cutoff[1:3]
 lon <- data$long_cutoff[1:3]
 out <- rdms(data$e2008g, data$latitude, lat, data$longitude, data$treat, lon)
 
 #-----------------------------------------------#
-# Snippet 5.14                                  #
+# Snippet 41 (Snippet 5.14 in arXiv pre-print)  #
 # Using rdrobust and the perpendicular distance #
 #-----------------------------------------------#
 out <- rdrobust(data$e2008g, data$perp_dist)

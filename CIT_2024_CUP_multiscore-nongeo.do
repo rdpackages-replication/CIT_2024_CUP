@@ -1,7 +1,6 @@
 **----------------------------------------------------------------------------**
 ** A Practical Introduction to Regression Discontinuity Designs: Extensions
 ** Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-** Last update: 2023-10-05
 **----------------------------------------------------------------------------**
 ** SOFTWARE WEBSITE: https://rdpackages.github.io/
 **----------------------------------------------------------------------------**
@@ -23,8 +22,6 @@
 **
 ** net install lpdensity, ///
 **		from("https://raw.githubusercontent.com/nppackages/lpdensity/master/stata") replace
-**
-** ssc install mmerge
 **----------------------------------------------------------------------------**
 
 clear
@@ -45,10 +42,10 @@ set more off
 **-------------------**
 ** Loading the data **
 **-------------------**
-use "CIT_2023_CUP_multiscore-nongeo.dta", clear
+use "CIT_2024_CUP_multiscore-nongeo.dta", clear
 
 **-----------------------------------------------------**
-** Figure 5.6                                          **
+** Figure 17 (Figure 5.6 in arXiv pre-print)           **
 ** Example of treatment assignment in bidimensional RD **
 **-----------------------------------------------------**
 preserve
@@ -74,10 +71,10 @@ preserve
 				30 -15 "b{subscript:2}", size(large))
 restore
 
-**-------------------------------------**
-** Snippet 5.6                         **
-** Using rdms on three boundary points **
-**-------------------------------------**
+**---------------------------------------------**
+** Snippet 33 (Snippet 5.6 in arXiv pre-print) **
+** Using rdms on three boundary points         **
+**---------------------------------------------**
 gen p1 = .
 gen p2 = .
 replace p1 = 0  in 1
@@ -90,7 +87,7 @@ list p1 p2 in 1/3
 rdms spadies_any running_sisben running_saber11 tr, cvar(p1 p2)
 
 **---------------------------------------------**
-** Snippet 5.7                                 **
+** Snippet 34 (Snippet 5.7 in arXiv pre-print) **
 ** Using rdrobust to illustrate what rdms does **
 **---------------------------------------------**
 global pdim1 = 30
@@ -101,7 +98,7 @@ replace dist = dist*(2*tr-1)
 rdrobust spadies_any dist
 
 **--------------------------------------------------------------**
-** Snippet 5.8                                                  **
+** Snippet 35 (Snippet 5.8 in arXiv pre-print)                  **
 ** Creating the perpendicular distance to the boundary (step 1) **
 **--------------------------------------------------------------**
 gen aux1 = abs(running_sisben)
@@ -116,22 +113,22 @@ replace xnorm = sqrt(running_sisben^2 + running_saber11^2) if ///
 	running_sisben<=0  & running_saber11<=0
 
 **--------------------------------------------------------------**
-** Snippet 5.9                                                  **
+** Snippet 36 (Snippet 5.9 in arXiv pre-print)                  **
 ** Creating the perpendicular distance to the boundary (step 2) **
 **--------------------------------------------------------------**
 replace xnorm = xnorm*(2*tr-1) 
 replace xnorm = . if running_sisben == . | running_saber11 == .
 
-**-------------------------------------------**
-** Snippet 5.10                              **
-** rdrobust using the perpendicular distance **
-**-------------------------------------------**
+**----------------------------------------------**
+** Snippet 37 (Snippet 5.10 in arXiv pre-print) **
+** rdrobust using the perpendicular distance    **
+**----------------------------------------------**
 rdrobust spadies_any xnorm
 
-**---------------------------------------**
-** Snippet 5.11                          **
-** rdms using the perpendicular distance **
-**---------------------------------------**
+**----------------------------------------------**
+** Snippet 38 (Snippet 5.11 in arXiv pre-print) **
+** rdms using the perpendicular distance        **
+**----------------------------------------------**
 rdms spadies_any running_sisben running_saber11 tr, cvar(p1 p2) xnorm(xnorm)
 
 *------------------------------------------------------------------------------*

@@ -1,7 +1,6 @@
 **----------------------------------------------------------------------------**
 ** A Practical Introduction to Regression Discontinuity Designs: Extensions
 ** Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-** Last update: 2023-10-05
 **----------------------------------------------------------------------------**
 ** SOFTWARE WEBSITE: https://rdpackages.github.io/
 **----------------------------------------------------------------------------**
@@ -23,8 +22,6 @@
 **
 ** net install lpdensity, ///
 **		from("https://raw.githubusercontent.com/nppackages/lpdensity/master/stata") replace
-**
-** ssc install mmerge
 **----------------------------------------------------------------------------**
 
 clear
@@ -45,54 +42,54 @@ set matsize 10000
 **------------------**
 ** Loading the data **
 **------------------**
-use "CIT_2023_CUP_locrand.dta", clear
+use "CIT_2024_CUP_locrand.dta", clear
 
 # delimit ;
 	global vars "X Y T presdemvoteshlag1 demvoteshlag1 demvoteshlag2 
 		demwinprv1 demwinprv2 dmidterm dpresdem dopen";
 # delimit cr
 
-**------------------------**
-** Table                  **
-** Descriptive statistics **
-**------------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** Descriptive statistics                                   **
+**----------------------------------------------------------**
 foreach x of global vars {
 	summarize `x', detail
 }
 
 **----------------------------------------------------**
-** Figure 2.3                                         **
+** Figure 4 (Figure 2.3 in arXiv pre-print)           **
 ** Mimicking variance RD plot with evenly-spaced bins **
 **----------------------------------------------------**
 rdplot Y X, p(3)
 
-**-------------------------------**
-** Snippet 2.1                   **
-** rdrobust with default options **
-**-------------------------------**
+**--------------------------------------------**
+** Snippet 1 (Snippet 2.1 in arXiv pre-print) **
+** rdrobust with default options              **
+**--------------------------------------------**
 rdrobust Y X, kernel(triangular) p(1) bwselect(mserd)
 
-**----------------------------**
-** Snippet 2.2                **
-** rdrandinf in ad-hoc window **
-**----------------------------**
+**--------------------------------------------**
+** Snippet 2 (Snippet 2.2 in arXiv pre-print) **
+** rdrandinf in ad-hoc window                 **
+**--------------------------------------------**
 rdrandinf Y X, wl(-2.5) wr(2.5) seed(50)
 
-**-------------------------------**
-** Snippet 2.3                   **
-** Binomial test using rdrandinf **
-**-------------------------------**
+**--------------------------------------------**
+** Snippet 3 (Snippet 2.3 in arXiv pre-print) **
+** Binomial test using rdrandinf              **
+**--------------------------------------------**
 gen bern_prob = 1/2 if abs(X) <= 2.5
 rdrandinf Y X, wl(-2.5) wr(2.5) seed(50) bernoulli(bern_prob)
 
-**-------------------------------**
-** Snippet 2.4                   **
-** Fisherian confidence interval **
-**-------------------------------**
+**--------------------------------------------**
+** Snippet 4 (Snippet 2.4 in arXiv pre-print) **
+** Fisherian confidence interval              **
+**--------------------------------------------**
 rdrandinf Y X, wl(-2.5) wr(2.5) seed(50) ci(0.05 -20(0.10)20)
 
 **--------------------------------------------------------**
-** Snippet 2.5                                            **
+** Snippet 5 (Snippet 2.5 in arXiv pre-print)             **
 ** Window selection with covariates                       **
 ** Note: we use the option "approx" to make things faster **
 **--------------------------------------------------------**
@@ -104,27 +101,27 @@ rdrandinf Y X, wl(-2.5) wr(2.5) seed(50) ci(0.05 -20(0.10)20)
 rdwinselect X $covs, seed(50) wobs(2) approx
 
 **--------------------------------------------------------**
-** Figure 2.5                                             **
+** Figure 6 (Figure 2.5 in arXiv pre-print)               **
 ** Windows vs. p-values                                   **
 ** Note: we use the option "approx" to make things faster **
 **--------------------------------------------------------**
 rdwinselect X $covs, seed(50) wobs(2) nwindows(200) plot approx
 
 **---------------------------------------------------------------**
-** Snippet 2.6                                                   **
+** Snippet 6 (Snippet 2.6 in arXiv pre-print)                    **
 ** Confidence interval with optimal window and power calculation **
 **---------------------------------------------------------------**
 rdrandinf Y X, wl(-0.7652) wr(0.7652) seed(50) ///
 	ci(0.05 -20(0.10)20) d(7.414)
 
-**--------------------------------------------------------**
-** Snippet                                                **
-** Falsification: rdrandinf with one particular covariate **
-**--------------------------------------------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** Falsification: rdrandinf with one particular covariate   **
+**----------------------------------------------------------**
 rdrandinf presdemvoteshlag1 X, wl(-0.7652) wr(0.7652) seed(50)
 
 **---------------------------------------------**
-** Table 2.2                                   **
+** Table 2 (Table 2.2 in arXiv pre-print)      **
 ** Falsification: rdrandinf for all covariates **
 **---------------------------------------------**
 local window = 0.7652
@@ -135,26 +132,26 @@ foreach y of global covs {
 	rdrandinf `y' X, wl(-`window') wr(`window') seed(50)
 }
 
-**------------------------------**
-** Snippet                      **
-** Density test using rdrandinf **
-**------------------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** Density test using rdrandinf                             **
+**----------------------------------------------------------**
 rdwinselect X, wmin(0.7652) nwindows(1)
 
-**-----------------------**
-** Snippet               **
-** Binomial test by hand **
-**-----------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** Binomial test by hand                                    **
+**----------------------------------------------------------**
 bitesti 41 25 1/2
 
-**-----------------------**
-** Snippet               **
-** Placebo cutoff at c=1 **
-**-----------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** Placebo cutoff at c=1                                    **
+**----------------------------------------------------------**
 rdrandinf Y X, c(1) wl(0.2348) wr(1.7652) seed(50)	
 
 **---------------------------------------------**
-** Table 2.3                                   **
+** Table 3 (Table 2.3 in arXiv pre-print)      **
 ** Falsification analysis with placebo cutoffs **
 **---------------------------------------------**
 local window = 0.7652
@@ -169,10 +166,10 @@ foreach c in -1 1 {
 	rdrandinf Y X, c(`c') wl(`left') wr(`right') seed(50)
 }
 
-**------------------------------**
-** Snippet 2.7                  **
-** Sensitivity to window choice **
-**------------------------------**
+**--------------------------------------------**
+** Snippet 7 (Snippet 2.7 in arXiv pre-print) **
+** Sensitivity to window choice               **
+**--------------------------------------------**
 rdrandinf Y X, wl(-0.6934) wr(0.6934) seed(50)	
 
 *------------------------------------------------------------------------------*

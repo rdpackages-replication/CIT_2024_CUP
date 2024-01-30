@@ -2,7 +2,6 @@
 #------------------------------------------------------------------------------#
 # A Practical Introduction to Regression Discontinuity Designs: Extensions
 # Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-# Last update: 2023-10-05
 #------------------------------------------------------------------------------#
 # SOFTWARE WEBSITE: https://rdpackages.github.io/
 #------------------------------------------------------------------------------#
@@ -15,11 +14,9 @@
 # install.packages('foreign')
 # install.packages('ggplot2')
 # install.packages('grid')
-# install.packages('TeachingDemos')
 # install.packages('geosphere')
 # install.packages('tidyverse')
 # install.packages('sf')
-# install.packages('USAboundaries')
 #------------------------------------------------------------------------------#
 
 ###########################################################
@@ -41,23 +38,21 @@ library(lpdensity)
 library(rddensity)
 library(rdrobust)
 library(rdlocrand)
-library(TeachingDemos)
 library(rdmulti)
 library(geosphere)
 library(tidyverse)
 library(sf)
-library(USAboundaries)
 
 #------------------#
 # Loading the data #
 #------------------#
-data <- read.dta("CIT_2023_CUP_multicutoff.dta")
+data <- read.dta("CIT_2024_CUP_multicutoff.dta")
 
-#----------------------------------------#
-# Figure 5.4                             #
-# Panel a: rdplot on one cutoff          #
-# Panel b: rdmcplot on the three cutoffs #
-#----------------------------------------#
+#-------------------------------------------#
+# Figure 15 (Figure 5.4 in arXiv pre-print) #
+# Panel a: rdplot on one cutoff             #
+# Panel b: rdmcplot on the three cutoffs    #
+#-------------------------------------------#
 # Panel a
 out <- rdplot(data$spadies_any[data$cutoff == -57.21], 
               data$sisben_score[data$cutoff == -57.21],
@@ -99,7 +94,7 @@ aux <- rdmcplot(data$spadies_any, data$sisben_score, data$cutoff,
 # Deafult plot
 aux$rdmc_plot
 
-# The rest of the code in this Figure 5.4b illustrates how to create the
+# The rest of the code in this figure illustrates how to create the
 # plot by hand, using the outputs from rdmcplot. This is useful in case
 # the user wants to customize the plot even further.
 
@@ -141,24 +136,24 @@ rdmc_plot <- rdmc_plot + geom_point(aes(x = Xmean[, 3], y = Ymean[, 3]), col = "
         axis.text=element_text(size = 16))
 rdmc_plot
 
-#-------------------------#
-# Snippet 5.1             #
-# rdrobust using cutoff 1 #
-#-------------------------#
+#---------------------------------------------#
+# Snippet 28 (Snippet 5.1 in arXiv pre-print) #
+# rdrobust using cutoff 1                     #
+#---------------------------------------------#
 data.cut1 <- data[data$cutoff == -57.21, c("spadies_any", "sisben_score")]
 out <- rdrobust(data.cut1$spadies_any, data.cut1$sisben_score, c = -57.21)
 summary(out)
 
-#----------------------------------#
-# Snippet 5.2                      #
-# Using rdmc and the three cutoffs #
-#----------------------------------#
+#---------------------------------------------#
+# Snippet 29 (Snippet 5.2 in arXiv pre-print) #
+# Using rdmc and the three cutoffs            #
+#---------------------------------------------#
 out <- rdmc(data$spadies_any, data$sisben_score, data$cutoff)
 
-#----------------------------------------#
-# Snippet 5.3                            #
-# Using rdrobust with a normalized score #
-#----------------------------------------#
+#---------------------------------------------#
+# Snippet 30 (Snippet 5.3 in arXiv pre-print) #
+# Using rdrobust with a normalized score      #
+#---------------------------------------------#
 data$area <- NA
 data$area[data$sisben_area == "Main metro area"] <- 1
 data$area[data$sisben_area == "Other urban area"] <- 2
@@ -169,13 +164,13 @@ data$xnorm[data$area == 1] <- data$sisben_score[data$area == 1] + 57.21
 data$xnorm[data$area == 2] <- data$sisben_score[data$area == 2] + 56.32
 data$xnorm[data$area == 3] <- data$sisben_score[data$area == 3] + 40.75
 #---#
-out <- rdrobust(data$spadies_any, data$xnorm, c=0)
+out <- rdrobust(data$spadies_any, data$xnorm, c = 0)
 summary(out)
 
-#------------------------------------------#
-# Snippet 5.4                              #
-# Using rdmc and understanding its outputs #
-#------------------------------------------#
+#---------------------------------------------#
+# Snippet 31 (Snippet 5.4 in arXiv pre-print) #
+# Using rdmc and understanding its outputs    #
+#---------------------------------------------#
 out <- rdmc(data$spadies_any, data$sisben_score, data$cutoff) 
 Coefs <- out$Coefs
 W <- out$W
@@ -184,7 +179,7 @@ print(W)
 print(Coefs[1,1]*W[1,1] + Coefs[1,2]*W[1,2] + Coefs[1,3]*W[1,3])
 
 #--------------------------------------------------------------------#
-# Snippet 5.5                                                        #
+# Snippet 32 (Snippet 5.5 in arXiv pre-print)                        #
 # Formally testing the difference between the effects at the cutoffs #
 #--------------------------------------------------------------------#
 out <- rdmc(data$spadies_any, data$sisben_score, data$cutoff)

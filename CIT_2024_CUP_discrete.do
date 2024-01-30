@@ -1,7 +1,6 @@
 **----------------------------------------------------------------------------**
 ** A Practical Introduction to Regression Discontinuity Designs: Extensions
 ** Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-** Last update: 2023-10-05
 **----------------------------------------------------------------------------**
 ** SOFTWARE WEBSITE: https://rdpackages.github.io/
 **----------------------------------------------------------------------------**
@@ -23,8 +22,6 @@
 **
 ** net install lpdensity, ///
 **		from("https://raw.githubusercontent.com/nppackages/lpdensity/master/stata") replace
-**
-** ssc install mmerge
 **----------------------------------------------------------------------------**
 
 clear
@@ -44,10 +41,10 @@ set more off
 **------------------**
 ** Loading the data **
 **------------------**
-use "CIT_2023_CUP_discrete.dta", clear
+use "CIT_2024_CUP_discrete.dta", clear
 
 **------------------------------------------------------------------**
-** Table                                                            **
+** Additional analysis (output not reported in publication)         **
 ** Descriptive statistics for Lindo, Sanders, and Oreopoulos (2010) **
 **------------------------------------------------------------------**
 # delimit ;
@@ -60,36 +57,36 @@ foreach x of global vars {
 }
 
 **----------------------------------------------------**
-** Figure 4.1                                         **
+** Figure 10 (Figure 4.1 in arXiv pre-print)          **
 ** Histogram and scatter plot of the running variable **
 **----------------------------------------------------**
-** Figure 4.1a: Histogram
+** Figure 10a (Figure 4.1a in arXiv pre-print): Histogram
 twoway (histogram X if X<0, width(0.1) freq color(blue) xline(0)) ///
 	(histogram X if X>=0, width(0.1) freq color(red)), ///
 	graphregion(color(white)) legend(off) ///
 	xtitle(Score) ytitle(Number of Observations)
 
-** Figure 4.1b: Scatter plot
+** Figure 10b (Figure 4.1b in arXiv pre-print): Scatter plot
 twoway (scatter nextGPA X if abs(X)<=0.25, mcolor(black) msize(vsmall)), ///
 	graphregion(color(white)) ylabel(,angle(0) nogrid) xlabel(-0.25(0.05)0.25) ///
 	xtitle("Running Variable")
 
 **-------------------------------------------------------------------**
-** Snippet 4.1                                                       **
+** Snippet 18 (Snippet 4.1 in arXiv pre-print)                       **
 ** Counting the number of observations with X different from missing **
 **-------------------------------------------------------------------**
 count if X != .
 
-**---------------------------------**
-** Snippet 4.2                     **
-** Counting the unique values of X **
-**---------------------------------**
+**---------------------------------------------**
+** Snippet 19 (Snippet 4.2 in arXiv pre-print) **
+** Counting the unique values of X             **
+**---------------------------------------------**
 codebook X
 
-**-------------------------------------**
-** Table 4.1                           **
-** Observations at closest mass points **
-**-------------------------------------**
+**----------------------------------------**
+** Table 6 (Table 4.1 in arXiv pre-print) **
+** Observations at closest mass points    **
+**----------------------------------------**
 forvalues k=1/3 {
 	preserve
 		gen obs=1
@@ -102,26 +99,26 @@ forvalues k=1/3 {
 	restore
 }
 
-**-----------------**
-** Snippet 4.3     **
-** Using rddensity **
-**-----------------**
+**---------------------------------------------**
+** Snippet 20 (Snippet 4.3 in arXiv pre-print) **
+** Using rddensity                             **
+**---------------------------------------------**
 rddensity X, nobinomial
 
-**-------------------------------**
-** Snippet                       **
-** Using rdrobust on a covariate **
-**-------------------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** Using rdrobust on a covariate                            **
+**----------------------------------------------------------**
 rdrobust hsgrade_pct X, bwselect(cerrd)
 
-**-----------------------------**
-** Snippet                     **
-** Using rdplot on a covariate **
-**-----------------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** Using rdplot on a covariate                              **
+**----------------------------------------------------------**
 rdplot hsgrade_pct X 
 
 **----------------------------------------**
-** Table 4.2                              **
+** Table 7 (Table 4.2 in arXiv pre-print) **
 ** RD effects on predetermined covariates **
 **----------------------------------------**
 # delimit ;
@@ -133,35 +130,35 @@ foreach y of global covariates {
 	rdrobust `y' X, all bwselect(cerrd)
 }
 
-**-----------------------------**
-** Snippet                     **
-** Using rdplot on the outcome **
-**-----------------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** Using rdplot on the outcome                              **
+**----------------------------------------------------------**
 rdplot nextGPA X, binselect(esmv) ///
 	graph_options(graphregion(color(white)) ///
 	xtitle(Score) ytitle(Outcome))
 
-**------------------------**
-** Figure 4.2             **
-** rdplot for the outcome **
-**------------------------**
+**-------------------------------------------**
+** Figure 11 (Figure 4.2 in arXiv pre-print) **
+** rdplot for the outcome                    **
+**-------------------------------------------**
 rdplot nextGPA X
 
-**-------------------------------**
-** Snippet 4.4                   **
-** Using rdrobust on the outcome **
-**-------------------------------**
+**---------------------------------------------**
+** Snippet 21 (Snippet 4.4 in arXiv pre-print) **
+** Using rdrobust on the outcome               **
+**---------------------------------------------**
 rdrobust nextGPA X, kernel(triangular) p(1) bwselect(mserd)  
 
-**----------------------------------------**
-** Snippet 4.5                            **
-** Using rdrobust and showing its outputs **
-**----------------------------------------**
+**---------------------------------------------**
+** Snippet 22 (Snippet 4.5 in arXiv pre-print) **
+** Using rdrobust and showing its outputs      **
+**---------------------------------------------**
 rdrobust nextGPA X
 ereturn list
 
 **-----------------------------------------------**
-** Snippet 4.6                                   **
+** Snippet 23 (Snippet 4.6 in arXiv pre-print)   **
 ** Using rdrobust with clustered standard errors **
 **-----------------------------------------------**
 cap drop clustervar
@@ -170,7 +167,7 @@ rdrobust nextGPA X, kernel(triangular) p(1) bwselect(mserd) ///
 	vce(cluster clustervar)
 
 **------------------------------------------------------**
-** Snippet 4.7                                          **
+** Snippet 24 (Snippet 4.7 in arXiv pre-print)          **
 ** Using rdrobust on the collapsed data (first outcome) **
 **------------------------------------------------------**
 preserve
@@ -178,26 +175,26 @@ preserve
 	rdrobust nextGPA X
 restore
 
-**--------------------------------**
-** Snippet                        **
-** Binomial test with rdwinselect **
-**--------------------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** Binomial test with rdwinselect                           **
+**----------------------------------------------------------**
 rdwinselect X, wmin(0.01) nwindows(1) cutoff(0.000005)
 
-**-----------------------**
-** Snippet 4.8           **
-** Binomial test by hand **
-**-----------------------**
+**---------------------------------------------**
+** Snippet 25 (Snippet 4.8 in arXiv pre-print) **
+** Binomial test by hand                       **
+**---------------------------------------------**
 bitesti 275 67 1/2
 
-**--------------------------------**
-** Snippet                        **
-** Using rdrandinf on a covariate **
-**--------------------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** Using rdrandinf on a covariate                           **
+**----------------------------------------------------------**
 rdrandinf hsgrade_pct X, seed(50) wl(-.005) wr(.01)
 
 **----------------------------------------**
-** Table 4.3                              **
+** Table 8 (Table 4.3 in arXiv pre-print) **
 ** RD effects on predetermined covariates **
 **----------------------------------------**
 # delimit ;
@@ -210,7 +207,7 @@ foreach y of global covariates {
 }
 
 **---------------------------------------------------------------**
-** Snippet 4.9                                                   **
+** Snippet 26 (Snippet 4.9 in arXiv pre-print)                   **
 ** Using rdwinselect with covariates to determine optimal window **
 **---------------------------------------------------------------**
 # delimit ;
@@ -221,16 +218,16 @@ foreach y of global covariates {
 rdwinselect X $covariates, cutoff(0.00005) wmin(0.01) wstep(0.01) ///
 	seed(50) level(0.135)
 
-**--------------------------------**
-** Snippet 4.10                   **
-** Using rdrandinf on the outcome **
-**--------------------------------**
+**----------------------------------------------**
+** Snippet 27 (Snippet 4.10 in arXiv pre-print) **
+** Using rdrandinf on the outcome               **
+**----------------------------------------------**
 rdrandinf nextGPA X, seed(50) wl(-0.005) wr(0.01) 
 
-**--------------------------------------**
-** Figure                               **
-** rdplots for predetermined covariates **
-**--------------------------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** rdplots for predetermined covariates                     **
+**----------------------------------------------------------**
 foreach y of global covariates {
 	rdplot `y' X
 }

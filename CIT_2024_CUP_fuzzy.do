@@ -1,7 +1,6 @@
 **----------------------------------------------------------------------------**
 ** A Practical Introduction to Regression Discontinuity Designs: Extensions
 ** Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-** Last update: 2023-10-05
 **----------------------------------------------------------------------------**
 ** SOFTWARE WEBSITE: https://rdpackages.github.io/
 **----------------------------------------------------------------------------**
@@ -23,8 +22,6 @@
 **
 ** net install lpdensity, ///
 **		from("https://raw.githubusercontent.com/nppackages/lpdensity/master/stata") replace
-**
-** ssc install mmerge
 **----------------------------------------------------------------------------**
 
 clear
@@ -45,7 +42,7 @@ set matsize 11000
 **------------------**
 ** Loading the data **
 **------------------**
-use "CIT_2023_CUP_fuzzy.dta", clear
+use "CIT_2024_CUP_fuzzy.dta", clear
 
 * Defining list of covariates
 # delimit ;
@@ -53,47 +50,47 @@ use "CIT_2023_CUP_fuzzy.dta", clear
 		icfes_famsize";
 # delimit cr
 
-**------------------------**
-** Table                  **
-** Descriptive statistics **
-**------------------------**
+**----------------------------------------------------------**
+** Additional analysis (output not reported in publication) **
+** Descriptive statistics                                   **
+**----------------------------------------------------------**
 global sumstats "X1 T D Y $covariates"
 foreach x of global sumstats {
 	summarize `x', detail
 }
 
-**---------------------------**
-** Figure 3.2                **
-** rdplot of the first stage **
-**---------------------------**
+**------------------------------------------**
+** Figure 8 (Figure 3.2 in arXiv pre-print) **
+** rdplot of the first stage                **
+**------------------------------------------**
 rdplot D X1
 
-**-----------------------------**
-** Snippet 3.1                 **
-** rdrobust of the first stage **
-**-----------------------------**
+**--------------------------------------------**
+** Snippet 8 (Snippet 3.1 in arXiv pre-print) **
+** rdrobust of the first stage                **
+**--------------------------------------------**
 rdrobust D X1
 
-**------------------------------**
-** Snippet 3.2                  **
-** rdrobust of the reduced form **
-**------------------------------**
+**--------------------------------------------**
+** Snippet 9 (Snippet 3.2 in arXiv pre-print) **
+** rdrobust of the reduced form               **
+**--------------------------------------------**
 rdrobust Y X1
 
-**----------------------------**
-** Figure 3.3                 **
-** rdplot of the reduced form **
-**----------------------------**
+**------------------------------------------**
+** Figure 9 (Figure 3.3 in arXiv pre-print) **
+** rdplot of the reduced form               **
+**------------------------------------------**
 rdplot Y X1, p(3)
 
-**------------------------**
-** Snippet 3.3            **
-** Fuzzy RD with rdrobust **
-**------------------------**
+**---------------------------------------------**
+** Snippet 10 (Snippet 3.3 in arXiv pre-print) **
+** Fuzzy RD with rdrobust                      **
+**---------------------------------------------**
 rdrobust Y X1, fuzzy(D)
 
 **----------------------------------------------------**
-** Snippet 3.4                                        **
+** Snippet 11 (Snippet 3.4 in arXiv pre-print)        **
 ** Selecting a window with rdwinselect and covariates **
 **----------------------------------------------------**
 # delimit ;
@@ -103,44 +100,44 @@ rdrobust Y X1, fuzzy(D)
 
 rdwinselect X1 $covariates
 
-**----------------------------**
-** Snippet 3.5                **
-** First stage with rdrandinf **
-**----------------------------**
+**---------------------------------------------**
+** Snippet 12 (Snippet 3.5 in arXiv pre-print) **
+** First stage with rdrandinf                  **
+**---------------------------------------------**
 rdrandinf D X1, wl(-0.13000107) wr(0.13000107)
 
-**-----------------------------**
-** Snippet 3.6                 **
-** Reduced form with rdrandinf **
-**-----------------------------**
+**---------------------------------------------**
+** Snippet 13 (Snippet 3.6 in arXiv pre-print) **
+** Reduced form with rdrandinf                 **
+**---------------------------------------------**
 rdrandinf Y X1, wl(-0.13000107) wr(0.13000107)
 
-**-------------------------**
-** Snippet 3.7             **
-** Fuzzy RD with rdrandinf **
-**-------------------------**
+**---------------------------------------------**
+** Snippet 14 (Snippet 3.7 in arXiv pre-print) **
+** Fuzzy RD with rdrandinf                     **
+**---------------------------------------------**
 rdrandinf Y X1, wl(-0.13000107) wr(0.13000107) fuzzy(D tsls)
 
-**----------------------------------**
-** Snippet 3.8                      **
-** Manipulation test with rddensity **
-**----------------------------------**
+**---------------------------------------------**
+** Snippet 15 (Snippet 3.8 in arXiv pre-print) **
+** Manipulation test with rddensity            **
+**---------------------------------------------**
 rddensity X1, bino_w(0.13000107) bino_nw(1)
 
-**--------------------------------------------**
-** Snippet 3.9                                **
-** Reduced form on a covariate using rdrobust **
-**--------------------------------------------**
+**---------------------------------------------**
+** Snippet 16 (Snippet 3.9 in arXiv pre-print) **
+** Reduced form on a covariate using rdrobust  **
+**---------------------------------------------**
 rdrobust icfes_female X1, bwselect(cerrd)
 
-**---------------------------------------------**
-** Snippet 3.10                                **
-** Reduced form on a covariate using rdrandinf **
-**---------------------------------------------**
+**----------------------------------------------**
+** Snippet 17 (Snippet 3.10 in arXiv pre-print) **
+** Reduced form on a covariate using rdrandinf  **
+**----------------------------------------------**
 rdrandinf icfes_female X1, wl(-0.13000107) wr(0.13000107)
 
 **-------------------------------------------------------**
-** Table 3.1                                             **
+** Table 4 (Table 3.1 in arXiv pre-print)                **
 ** Reduced form regressions on covariates using rdrobust **
 **-------------------------------------------------------**
 foreach y of global covariates {
@@ -148,7 +145,7 @@ foreach y of global covariates {
 }
 
 **--------------------------------------------------------**
-** Table 3.2                                              **
+** Table 5 (Table 3.2 in arXiv pre-print)                 **
 ** Reduced form regressions on covariates using rdrandinf **
 **--------------------------------------------------------**
 local window = 0.13000107

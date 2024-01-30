@@ -1,7 +1,6 @@
 **----------------------------------------------------------------------------**
 ** A Practical Introduction to Regression Discontinuity Designs: Extensions
 ** Authors: Matias D. Cattaneo, Nicolás Idrobo and Rocío Titiunik
-** Last update: 2023-10-05
 **----------------------------------------------------------------------------**
 ** SOFTWARE WEBSITE: https://rdpackages.github.io/
 **----------------------------------------------------------------------------**
@@ -23,8 +22,6 @@
 **
 ** net install lpdensity, ///
 **		from("https://raw.githubusercontent.com/nppackages/lpdensity/master/stata") replace
-**
-** ssc install mmerge
 **----------------------------------------------------------------------------**
 
 clear
@@ -45,10 +42,10 @@ set more off
 **------------------**
 ** Loading the data **
 **------------------**
-use "CIT_2023_CUP_multiscore-geo.dta", clear
+use "CIT_2024_CUP_multiscore-geo.dta", clear
 
 **--------------------------------------------------------**
-** Table 5.3                                              **
+** Table 11 (Table 5.3 in arXiv pre-print)                **
 ** Descriptive statistics for the Keele and Titiunik data **
 **--------------------------------------------------------**
 # delimit ;
@@ -66,7 +63,7 @@ foreach x of varlist dist1 dist2 dist3 perp_dist {
 }
 
 **----------------------------------------------**
-** Figure 5.7                                   **
+** Figure 18 (Figure 5.7 in arXiv pre-print)    **
 ** Treated and control areas in a geographic RD **
 **----------------------------------------------**
 global b1_lon = -74.61789
@@ -92,7 +89,7 @@ twoway (scatter longitude latitude if treated == 0, ///
 		symxsize(0.025in)) xlabel(,nogrid)
 
 **--------------------------------------------------------**
-** Figure 5.8                                             **
+** Figure 19 (Figure 5.8 in arXiv pre-print)              **
 ** Histograms of chordal distance for control and treated **
 **--------------------------------------------------------**
 gen disCho_b2=abs(dist2)
@@ -113,14 +110,14 @@ twoway (histogram disCho_b2 if treated==0, freq colo(ebblue%60)), ///
 **-----------------------------------**
 rdrobust e2008g dist2
 
-**------------------------------------------**
-** Snippet 5.13                             **
-** Using rdms and the three boundary points **
-**------------------------------------------**
+**----------------------------------------------**
+** Snippet 40 (Snippet 5.13 in arXiv pre-print) **
+** Using rdms and the three boundary points     **
+**----------------------------------------------**
 rdms e2008g latitude longitude treat, cvar(lat_cutoff long_cutoff) 
 
 **-----------------------------------------------**
-** Snippet 5.14                                  **
+** Snippet 41 (Snippet 5.14 in arXiv pre-print)  **
 ** Using rdrobust and the perpendicular distance **
 **-----------------------------------------------**
 rdrobust e2008g perp_dist
